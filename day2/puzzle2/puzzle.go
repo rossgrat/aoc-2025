@@ -1,4 +1,4 @@
-package puzzle1
+package puzzle2
 
 import (
 	"fmt"
@@ -26,7 +26,24 @@ func Run() {
 
 		fmt.Println("Start: ", start, " - End: ", end)
 
-		for i := start; i <= end; i++ {
+		for val := start; val <= end; val++ {
+			fmt.Println("VAL", val)
+			valStr := strconv.Itoa(val)
+
+			factors := []int{}
+			for length := 1; length < len(valStr); length++ {
+				if len(valStr)%length == 0 {
+					factors = append(factors, length)
+				}
+			}
+
+			fmt.Println("Factors:", factors)
+
+			match := matchedPattern(valStr, factors)
+
+			if match {
+				invalidSum = invalidSum + val
+			}
 
 			// Solution Idea 1 - Factor Approach
 			// 1. Compute all factors for a number
@@ -36,9 +53,32 @@ func Run() {
 			// Solution Idea 2 - Backtracking (Claude Description of Regex Backtrace)
 			// 1. Start at full number
 			// 2. Recursively try and match following substring until no values left
+			fmt.Println()
+			fmt.Println()
 		}
 
 	}
 
 	fmt.Println(invalidSum)
+}
+
+func matchedPattern(valStr string, factors []int) bool {
+	for _, factor := range factors {
+		factorFailed := false
+		fmt.Println("FACTOR", factor)
+		chunk1 := valStr[:factor]
+		fmt.Println("CHUNK1", chunk1)
+		for iter := factor * 2; iter <= len(valStr); iter = iter + factor {
+			chunk2 := valStr[iter-factor : iter]
+			fmt.Println("CHUNK-N", chunk2)
+			if chunk1 != chunk2 {
+				factorFailed = true
+				break
+			}
+		}
+		if !factorFailed {
+			return true
+		}
+	}
+	return false
 }
